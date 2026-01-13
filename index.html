@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>病床標籤系統</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .controls input {
+            padding: 8px 12px;
+            margin-right: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .controls button {
+            padding: 8px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .controls button:hover {
+            background: #45a049;
+        }
+        
+         .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            padding: 10px;
+        }
+        
+        .card {
+            background: white;
+            border: 3px solid #333;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        
+        .bed-number {
+            font-size: 72px;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .patient-name {
+            font-size: 64px;
+            font-weight: bold;
+            color: #4169E1;
+            margin: 10px 0 30px 0;
+            text-align: center;
+            cursor: pointer;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed transparent;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .patient-name:hover {
+            background: #f8f8f8;
+            border-color: #4169E1;
+        }
+        
+        .patient-name.empty::after {
+            content: '點擊輸入姓名';
+            font-size: 24px;
+            color: #ccc;
+        }
+        
+        .icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #999;
+            font-weight: bold;
+        }
+        
+        .icon.oxygen::before {
+            content: 'O';
+        }
+        
+        .icon.oxygen::after {
+            content: '2';
+            font-size: 32px;
+            vertical-align: sub;
+        }
+        
+        .icon.baby {
+            font-size: 56px;
+        }
+        
+        .icon.baby::before {
+            content: '👶';
+        }
+        
+        .icon.level {
+            background: #dc3545;
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 36px;
+        }
+        
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            display: none;
+        }
+        
+        .card:hover .delete-btn {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <input type="text" id="bedPrefix" placeholder="床號前綴 (如: B)" value="B">
+        <input type="number" id="startNumber" placeholder="起始號碼" value="1" min="1">
+        <input type="number" id="cardCount" placeholder="卡片數量" value="3" min="1" max="50">
+        <button onclick="generateCards()">生成卡片</button>
+    </div>
+    
+    <div class="grid-container" id="grid"></div>
+
+    <script>
+        let cards = [];
+        
+        function generateCards() {
+            const prefix = document.getElementById('bedPrefix').value || 'B';
+            const start = parseInt(document.getElementById('startNumber').value) || 1;
+            const count = parseInt(document.getElementById('cardCount').value) || 3;
+            
+            cards = [];
+            for (let i = 0; i < count; i++) {
+                const num = (start + i).toString().padStart(3, '0');
+                cards.push({
+                    bedNumber: prefix + num,
+                    patientName: ''
+                });
+            }
+            renderCards();
+        }
+        
+        function renderCards() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            
+            cards.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card';
+                cardDiv.innerHTML = `
+                    <button class="delete-btn" onclick="deleteCard(${index})">×</button>
+                    <div class="bed-number">${card.bedNumber}</div>
+                    <div class="patient-name ${card.patientName ? '' : 'empty'}" onclick="editName(${index})">
+                        ${card.patientName || ''}
+                    </div>
+                    <div class="icons">
+                        <div class="icon oxygen"></div>
+                        <div class="icon baby"></div>
+                        <div class="icon level">L1</div>
+                    </div>
+                `;
+                grid.appendChild(cardDiv);
+            });
+        }
+        
+
+    </script>
+</body>
+</html>
