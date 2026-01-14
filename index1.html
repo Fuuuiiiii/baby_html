@@ -178,7 +178,8 @@
         function renderCards() {
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
-
+            
+            //逐個寫入
             cards.forEach(card => {
                 const cardDiv = document.createElement('div');
                 cardDiv.className = 'card';
@@ -198,7 +199,7 @@
             });
         }
 
-        //  輸入姓名
+        //  輸入姓名，建立一個全域函式
         window.editName = function (index) {
             const newName = prompt('請輸入病患姓名:', cards[index].patientName || '');
 
